@@ -1,1 +1,2 @@
-# kapas
+# Code Repository of Project Kapas
+

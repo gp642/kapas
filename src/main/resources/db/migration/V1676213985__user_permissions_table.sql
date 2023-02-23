@@ -1,5 +1,6 @@
 
---------------- TABLES 
+-- TABLES
+
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
@@ -14,12 +15,27 @@ CREATE TABLE `user`
     `is_active`         boolean DEFAULT TRUE,
     `description`       varchar(175) DEFAULT NULL,
     `role_id`           int NOT NULL,
-    `created_by`        int DEFAULT NULL,
-    `modified_by`       int DEFAULT NULL,
+    `created_by`        int NOT NULL,
+    `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `id`          int(11) NOT NULL AUTO_INCREMENT,
+  `user_id`     int(11) NOT NULL,
+  `session_id`  varchar(100) NOT NULL,
+  `time_stamp`  datetime NOT NULL,
+  `expires_at`  datetime NOT NULL,
+  `created_at`  datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `sessions_of_user_FK` (`user_id`),
+  CONSTRAINT `sessions_of_user_FK` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+);
 
 
 DROP TABLE IF EXISTS `role`;
@@ -28,11 +44,11 @@ CREATE TABLE `role`
     `id`                int NOT NULL AUTO_INCREMENT,
     `role_name`         varchar(25) NOT NULL,
     `description`       varchar(150) DEFAULT NULL,
-    `created_by`        int DEFAULT NULL,
-    `modified_by`       int DEFAULT NULL,
+    `created_by`        int NOT NULL,
+    `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -43,7 +59,7 @@ CREATE TABLE `permission`
     `permission_name`   varchar(45) NOT NULL,
     `description`       varchar(150) DEFAULT NULL,
     `created_by`        int NOT NULL,
-    `modified_by`       int DEFAULT NULL,
+    `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
@@ -74,7 +90,7 @@ CREATE TABLE `workorder`
     `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -94,7 +110,7 @@ CREATE TABLE `task`
     `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -105,7 +121,7 @@ CREATE TABLE `item_type`
     `id`            int NOT NULL AUTO_INCREMENT,
     `name`          varchar(25) NOT NULL,
     `description`   varchar(125) DEFAULT NULL,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -116,7 +132,7 @@ CREATE TABLE `id_type`
     `id`            int NOT NULL AUTO_INCREMENT,
     `id_type`       varchar(25) NOT NULL,
     `description`   varchar(125) DEFAULT NULL,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -127,7 +143,7 @@ CREATE TABLE `vendor_type`
     `id`            int NOT NULL AUTO_INCREMENT,
     `vendor_type`   varchar(25) NOT NULL,
     `description`   varchar(125) DEFAULT NULL,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -152,7 +168,7 @@ CREATE TABLE `vendor`
     `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
@@ -171,11 +187,25 @@ CREATE TABLE `purchase`
     `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
     `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`) 
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
---------------- CONSTRAINTS 
+
+
+
+--  INITAL DATA
+
+INSERT INTO `role`(role_name, description, created_by, modified_by)
+VALUES ('ROLE_ADMIN', 'This is Administrator role. This is the highest level Role in the organization which has all the permissions', 1, 1);
+
+INSERT INTO `user`(user_name, first_name, last_name, email, password, mobile, is_active, description, role_id, created_by, modified_by)
+VALUES ('admin', 'Admin', 'Admin', 'kapas_2023@gmail.com', 'yq2Dq6hosT3V9tJFWMNiwA==', '999-999-9999', 1, 'This is Admin User.', 1, 1, 1);
+
+
+
+
+-- CONSTRAINTS
 
 ALTER TABLE `user`
     ADD CONSTRAINT `user_role_fk` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
@@ -255,50 +285,18 @@ ALTER TABLE `purchase`
 
 
 -- DELETE CONSTRAINTS -- PLEASE KEEP COMMENTED
----- ALTER TABLE `user` DROP CONSTRAINT `user_role_fk`
----- ALTER TABLE `user` DROP CONSTRAINT `user_creation_user_fk`
----- ALTER TABLE `user` DROP CONSTRAINT `user_modification_user_fk`
----- ALTER TABLE `role` DROP CONSTRAINT `role_creation_user_fk`
----- ALTER TABLE `role` DROP CONSTRAINT `role_modification_user_fk`
----- ALTER TABLE `permission` DROP CONSTRAINT `permission_creation_user_fk`
----- ALTER TABLE `permission` DROP CONSTRAINT `permission_modification_user_fk`
----- ALTER TABLE `role_permission` DROP CONSTRAINT `permission_fk`
----- ALTER TABLE `role_permission` DROP CONSTRAINT `role_fk`
+-- ALTER TABLE `user` DROP CONSTRAINT `user_role_fk`
+-- ALTER TABLE `user` DROP CONSTRAINT `user_creation_user_fk`
+-- ALTER TABLE `user` DROP CONSTRAINT `user_modification_user_fk`
+-- ALTER TABLE `role` DROP CONSTRAINT `role_creation_user_fk`
+-- ALTER TABLE `role` DROP CONSTRAINT `role_modification_user_fk`
+-- ALTER TABLE `permission` DROP CONSTRAINT `permission_creation_user_fk`
+-- ALTER TABLE `permission` DROP CONSTRAINT `permission_modification_user_fk`
+-- ALTER TABLE `role_permission` DROP CONSTRAINT `permission_fk`
+-- ALTER TABLE `role_permission` DROP CONSTRAINT `role_fk`
 
 
 
---------------- DUMMY DATA
 
-INSERT INTO `role`(role_name, description)
-VALUES ('ROLE_ADMIN', 'This is Administrator role. This is the highest level Role in the organization which has all the permissions');
 
-INSERT INTO `user`(user_name, first_name, last_name, email, password, mobile, is_active, description, role_id)
-VALUES ('alice', 'Alice', 'Abernathy', 'alice_kapas@gmail.com', 'ResidentEvil', 999-999-9999, 1, 'My name is alice. I used to work for Umbrella Corporation. The Umbrella Corporation has an highly unstable and homicidal AI called Red Queen. And Im going to kill her.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_LOGIN', 'This Permission grants the ability to login.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_CREATE_USER', 'This Permission grants the ability to create new users.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_CREATE_ROLE', 'This Permission grants the ability to create new roles.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_CREATE_PERMISSION', 'This Permission grants the ability to create new permissions.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_UPDATE_USER_ROLE_PERMISSION', 'This Permission grants the ability to update any user, its roles and permissions.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_INSERT_VENDOR_DETAILS', 'This Permission allows to insert the Vendor details in procurement process.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_QUALITY_CHECK', 'This Permission allows to determine the item GRADE.', 1);
-
-INSERT INTO `permission`(permission_name, description, created_by)
-VALUES ('PRM_INSERT_PRICE', 'This Permission allows to determine and insert the price of the item.', 1);
-
-INSERT INTO `role_permission`(role_id, permission_id)
-VALUES (1, 1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8);
 

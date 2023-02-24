@@ -1,6 +1,6 @@
 package com.example.kapas.service;
 
-import com.example.kapas.entity.SessionsOfUser;
+import com.example.kapas.entity.Sessions;
 import com.example.kapas.model.UserSession;
 import com.example.kapas.repository.SessionOfUserRepository;
 import com.example.kapas.util.EncryptionUtil;
@@ -45,7 +45,7 @@ public class SessionManagerService {
         LOGGER.debug(" ================================= SESSION ID  " + sessionId);
 
         UserSession userSession = new UserSession(sessionId, currentTime.plusSeconds(EXPIRES_AT_WEBAPP), currentTime);
-        SessionsOfUser sessionsOfUser = new SessionsOfUser(userId, userSession);
+        Sessions sessionsOfUser = new Sessions(userId, userSession);
         sessionOfUserRepository.save(sessionsOfUser);
         return userSession;
     }

@@ -24,8 +24,8 @@ CREATE TABLE `user`
 
 
 
-DROP TABLE IF EXISTS `sessions`;
-CREATE TABLE `sessions` (
+DROP TABLE IF EXISTS `sessions_of_user`;
+CREATE TABLE `sessions_of_user` (
   `id`          int(11) NOT NULL AUTO_INCREMENT,
   `user_id`     int(11) NOT NULL,
   `session_id`  varchar(100) NOT NULL,
@@ -77,6 +77,24 @@ CREATE TABLE `role_permission`
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 
+
+DROP TABLE IF EXISTS `workflow`;
+CREATE TABLE `workflow`
+(
+    `id`                int NOT NULL AUTO_INCREMENT,
+    `workflow_id`       varchar(75) NOT NULL,
+    `description`       varchar(150) NOT NULL,
+    `version`           int NOT NULL,
+    `workflow_json`     blob NOT NULL,
+    `created_by`        int NOT NULL,
+    `modified_by`       int NOT NULL,
+    `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
+    `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+
+
 DROP TABLE IF EXISTS `workorder`;
 CREATE TABLE `workorder`
 (
@@ -85,6 +103,7 @@ CREATE TABLE `workorder`
     `status`            enum ('NOT_STARTED','IN_PROGRESS','COMPLETED','CLOSED') DEFAULT 'NOT_STARTED',
     `is_active`         boolean DEFAULT TRUE,
     `meta_data`         blob DEFAULT NULL,
+    `workflow_id_fk`    int NOT NULL,
     `assigned_to`       int NOT NULL,
     `created_by`        int NOT NULL,
     `modified_by`       int NOT NULL,
@@ -103,9 +122,10 @@ CREATE TABLE `task`
     `workorder_id_fk`   int NOT NULL,
     `title`             varchar(100),
     `remark`            varchar(175) DEFAULT NULL,
-    `status`            enum ('NOT_STARTED','IN_PROGRESS','COMPLETED','RE_ASSIGNED', 'CLOSED') DEFAULT 'NOT_STARTED',
+    `status`            enum ('NOT_STARTED','IN_PROGRESS','COMPLETED','RE_OPENED', 'CLOSED') DEFAULT 'NOT_STARTED',
     `assigned_to`       int NOT NULL,
     `is_active`         boolean DEFAULT TRUE,
+    `task_number`       boolean NOT NULL,
     `created_by`        int NOT NULL,
     `modified_by`       int NOT NULL,
     `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
@@ -202,8 +222,43 @@ VALUES ('ROLE_ADMIN', 'This is Administrator role. This is the highest level Rol
 INSERT INTO `user`(user_name, first_name, last_name, email, password, mobile, is_active, description, role_id, created_by, modified_by)
 VALUES ('admin', 'Admin', 'Admin', 'kapas_2023@gmail.com', 'yq2Dq6hosT3V9tJFWMNiwA==', '999-999-9999', 1, 'This is Admin User.', 1, 1, 1);
 
+INSERT INTO `workflow`(workflow_id, description, version, workflow_json, created_by, modified_by)
+VALUES ('SHRI_BALAJI_AGR_PROCUREMENT_PROCESS', 'This workflow is for the digital automation of the currently followed procuerement process at Shri Balaji Agro Pvt Ltd.', 1,
+"{
+    'workflow_id':'SHRI_BALAJI_AGR_PROCUREMENT_PROCESS',
+    'total_task':4,
+    'task':[
+        {
+            'task_number':1,
+            'task_id':'GENERATE_TOKEN',
+            'task_name':'Generate Token',
+            'description':'',
+            'required':'true'
+        },
+        {
+            'task_number':2,
+            'task_id':'GRADING',
+            'task_name':'Grade Cheking',
+            'description':'',
+            'required':'true'
+        },
+        {
+            'task_number':3,
+            'task_id':'WEIGHING',
+            'task_name':'Item Weighing',
+            'description':'',
+            'required':'true'
+        },
+        {
+            'task_number':4,
+            'task_id':'UNLOADING',
+            'task_name':'Item Unloading',
+            'description':'',
+            'required':'true'
+        }
 
-
+    ]
+}", 1, 1);
 
 -- CONSTRAINTS
 
@@ -233,6 +288,9 @@ ALTER TABLE `role_permission`
 
 ALTER TABLE `role_permission`
     ADD CONSTRAINT `role_fk` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
+
+ALTER TABLE `workorder`
+    ADD CONSTRAINT `workorder_workflow_fk` FOREIGN KEY (`workflow_id_fk`) REFERENCES `workflow` (`id`);
 
 ALTER TABLE `workorder`
     ADD CONSTRAINT `workorder_assigned_user_fk` FOREIGN KEY (`assigned_to`) REFERENCES `user` (`id`);
@@ -294,9 +352,3 @@ ALTER TABLE `purchase`
 -- ALTER TABLE `permission` DROP CONSTRAINT `permission_modification_user_fk`
 -- ALTER TABLE `role_permission` DROP CONSTRAINT `permission_fk`
 -- ALTER TABLE `role_permission` DROP CONSTRAINT `role_fk`
-
-
-
-
-
-

@@ -12,8 +12,7 @@ import java.util.Optional;
 @Repository
 public interface WorkflowRepository extends CrudRepository<Workflow, Integer> {
 
-    @Query("select wf from Workflow wf where wf.workflow_id = workflow_id")
-    @Modifying
+    @Query("select wf from Workflow wf where wf.workflow_id = :workflow_id")
     Workflow getLatestWorkflowByWorkflowId(String workflow_id);
 
 }

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class WorkflowController {
         this.workflowService = workflowService;
     }
 
-    @PostMapping(value = "/getWorkflowByWorkflowId")
+    @GetMapping(value = "/getWorkflowByWorkflowId")
     public ResponseEntity<Workflow> getWorkflowByWorkflowId(String workorder_id) throws Exception {
         logger.debug("Getting workorder_id : {}", workorder_id);
         Workflow workflow = workflowService.loadWorkflow(workorder_id);

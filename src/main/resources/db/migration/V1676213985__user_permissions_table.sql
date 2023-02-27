@@ -233,28 +233,28 @@ VALUES ('SHRI_BALAJI_AGR_PROCUREMENT_PROCESS', 'This workflow is for the digital
             'task_id':'GENERATE_TOKEN',
             'task_name':'Generate Token',
             'description':'',
-            'required':'true'
+            'required':true
         },
         {
             'task_number':2,
             'task_id':'GRADING',
             'task_name':'Grade Cheking',
             'description':'',
-            'required':'true'
+            'required':true
         },
         {
             'task_number':3,
             'task_id':'WEIGHING',
             'task_name':'Item Weighing',
             'description':'',
-            'required':'true'
+            'required':true
         },
         {
             'task_number':4,
             'task_id':'UNLOADING',
             'task_name':'Item Unloading',
             'description':'',
-            'required':'true'
+            'required':true
         }
 
     ]

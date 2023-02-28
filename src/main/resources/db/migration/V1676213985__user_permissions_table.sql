@@ -24,8 +24,8 @@ CREATE TABLE `user`
 
 
 
-DROP TABLE IF EXISTS `sessions_of_user`;
-CREATE TABLE `sessions_of_user` (
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
   `id`          int(11) NOT NULL AUTO_INCREMENT,
   `user_id`     int(11) NOT NULL,
   `session_id`  varchar(100) NOT NULL,

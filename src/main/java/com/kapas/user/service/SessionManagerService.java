@@ -42,8 +42,6 @@ public class SessionManagerService {
         String sessionSalt = createSessionSalt(userId.toString());
         String sessionId = encryptUserSession(sessionSalt);
 
-        LOGGER.debug(" ================================= SESSION ID  " + sessionId);
-
         UserSession userSession = new UserSession(sessionId, currentTime.plusSeconds(EXPIRES_AT_WEBAPP), currentTime);
         Sessions sessionsOfUser = new Sessions(userId, userSession);
         sessionOfUserRepository.save(sessionsOfUser);

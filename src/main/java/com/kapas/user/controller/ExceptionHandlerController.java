@@ -34,7 +34,7 @@ public class ExceptionHandlerController {
     public ResponseEntity<ApiResponseError<String>> invalidAuth(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
         StringBuilder violationMessage = new StringBuilder("Invalid Parameters.");
-        if (constraintViolations.size() > 0) {
+        if (!constraintViolations.isEmpty()) {
             violationMessage = new StringBuilder("Following Constraints failed : ");
             for (ConstraintViolation<?> constraintViolation : constraintViolations) {
                 violationMessage.append(constraintViolation.getMessage()).append(" ");

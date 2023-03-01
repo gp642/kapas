@@ -1,18 +1,25 @@
 package com.kapas.user.service;
 
 import com.kapas.user.entity.Sessions;
+import com.kapas.user.entity.User;
 import com.kapas.user.model.UserSession;
 import com.kapas.user.repository.SessionsRepository;
-import com.kapas.util.EncryptionUtil;
 import com.kapas.util.AppUtils;
+import com.kapas.util.EncryptionUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
+@Validated
 public class SessionManagerService {
 
     private static final Logger LOGGER = LogManager.getLogger(SessionManagerService.class);
@@ -20,11 +27,6 @@ public class SessionManagerService {
     private static final int EXPIRES_AT_WEBAPP = 60 * 60 * 24 * 2; // 2 days
 
     private final SessionsRepository sessionOfUserRepository;
-
-    public SessionManagerService(SessionsRepository sessionOfUserRepository) {
-        this.sessionOfUserRepository = sessionOfUserRepository;
-    }
-
 
     private static String encryptUserSession(String sessionSalt) throws Exception {
         return EncryptionUtil.encrypt(sessionSalt);
@@ -35,16 +37,27 @@ public class SessionManagerService {
     }
 
     @Transactional
-    public UserSession createSession(Integer userId) throws Exception {
+    public UserSession createSession(User user) throws Exception {
 
         final LocalDateTime currentTime = LocalDateTime.now();
 
-        String sessionSalt = createSessionSalt(userId.toString());
+        String sessionSalt = createSessionSalt(user.getId().toString());
         String sessionId = encryptUserSession(sessionSalt);
 
         UserSession userSession = new UserSession(sessionId, currentTime.plusSeconds(EXPIRES_AT_WEBAPP), currentTime);
-        Sessions sessionsOfUser = new Sessions(userId, userSession);
+        Sessions sessionsOfUser = new Sessions(user, userSession);
         sessionOfUserRepository.save(sessionsOfUser);
         return userSession;
+    }
+
+    public User validateSession(@NotBlank(message = "Missing Session-Id header in request.") String sessionId) throws Exception {
+        String sessionSalt = EncryptionUtil.decrypt(sessionId);
+        String[] sessionSaltArray = sessionSalt.split(SALT_SPLITTER);
+        Optional<Sessions> sessions = sessionOfUserRepository.findByUserIdAndSessionId(Integer.valueOf(sessionSaltArray[0]), sessionId);
+        Sessions session = sessions.orElseThrow(()-> new Exception("Provided Session Id is not valid"));
+        if(session.getExpiresAt().compareTo(LocalDateTime.now()) <= 0 ) {
+            throw new Exception("Session Id expired.");
+        }
+        return session.getUser();
     }
 }

@@ -25,7 +25,7 @@ public class EncryptionUtil {
         byte[] cipherTextBytes;
         Cipher c = Cipher.getInstance(ENCRYPTION_ALGORITHM);
 
-        if (StringUtils.isEmpty(SECRET_KEY) || SECRET_KEY.length() != SECRET_KEY_SIZE)
+        if (StringUtils.isBlank(SECRET_KEY) || SECRET_KEY.length() != SECRET_KEY_SIZE)
             throw new Exception("Please Set AES Env Key of "+SECRET_KEY_SIZE+" characters First");
 
         if (StringUtils.isEmpty(SECRET_IV) || SECRET_IV.length() != SECRET_KEY_SIZE)
@@ -36,5 +36,13 @@ public class EncryptionUtil {
         c.init(Cipher.ENCRYPT_MODE, secretKeySpec, spec);
         cipherTextBytes = c.doFinal(value.getBytes(StandardCharsets.UTF_8));
         return Base64.getUrlEncoder().encodeToString(cipherTextBytes);
+    }
+
+    public static String decrypt(String value) throws Exception {
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+        SecretKey secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), "AES");
+        GCMParameterSpec spec = new GCMParameterSpec(128, SECRET_IV.getBytes(StandardCharsets.UTF_8));
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, spec);
+        return new String(cipher.doFinal(Base64.getUrlDecoder().decode(value)));
     }
 }

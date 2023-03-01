@@ -11,7 +11,8 @@ Prerequisites
 
 Following environment variable(s) need to be set:
 
-0. AES_128_KEY (16 characters. Example: `UniqueSecretKeys`)
+0. AES_256_KEY (32 characters. Example: `UniqueSecretKeysUniqueSecretKeys`)
+1. AES_256_IV (32 characters. Example: `UniqueSecretIVUniqueSecretIVFOUR`)
 
 Usual build tasks
 -----------------

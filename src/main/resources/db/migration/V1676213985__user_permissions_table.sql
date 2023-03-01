@@ -220,7 +220,7 @@ INSERT INTO `role`(role_name, description, created_by, modified_by)
 VALUES ('ROLE_ADMIN', 'This is Administrator role. This is the highest level Role in the organization which has all the permissions', 1, 1);
 
 INSERT INTO `user`(user_name, first_name, last_name, email, password, mobile, is_active, description, role_id, created_by, modified_by)
-VALUES ('admin', 'Admin', 'Admin', 'kapas_2023@gmail.com', 'yq2Dq6hosT3V9tJFWMNiwA==', '999-999-9999', 1, 'This is Admin User.', 1, 1, 1);
+VALUES ('admin', 'Admin', 'Admin', 'kapas_2023@gmail.com', '$2a$10$l3DiOh2JYd9pH9UY5MIziuJ4dNr0reoPncGkow9a1Ke/OSr7hMjl2', '999-999-9999', 1, 'This is Admin User.', 1, 1, 1);
 
 INSERT INTO `workflow`(workflow_id, description, version, workflow_json, created_by, modified_by)
 VALUES ('SHRI_BALAJI_AGR_PROCUREMENT_PROCESS', 'This workflow is for the digital automation of the currently followed procuerement process at Shri Balaji Agro Pvt Ltd.', 1,

@@ -14,8 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "permission")
 @Entity
@@ -48,6 +48,6 @@ public class Permission {
     private Instant modificationTime;
 
     @ManyToMany(mappedBy = "permissions")
-    private List<Role> posts = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
 }

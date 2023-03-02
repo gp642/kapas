@@ -11,9 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.Instant;
 import java.util.HashSet;
@@ -49,24 +48,17 @@ public class Role {
     @Column(name = "modification_time")
     private Instant modificationTime;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "role_permission",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
-    Set<Permission> permissions = new HashSet<>();
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Scope> scopes = new HashSet<>();
 
-    public void addPermission(Permission permission) {
-        permissions.add(permission);
-        permission.getRoles().add(this);
+    public void addScope(Scope scope) {
+        scopes.add(scope);
+        scope.setRole(this);
     }
 
-    public void removePermission(Permission permission) {
-        permissions.remove(permission);
-        permission.getRoles().remove(this);
+    public void removeScope(Scope scope) {
+        scopes.remove(scope);
+        scope.setRole(null);
     }
 
 }

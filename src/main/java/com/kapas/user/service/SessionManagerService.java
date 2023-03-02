@@ -50,6 +50,7 @@ public class SessionManagerService {
         return userSession;
     }
 
+    @Transactional(readOnly = true)
     public User validateSession(@NotBlank(message = "Missing Session-Id header in request.") String sessionId) throws Exception {
         String sessionSalt = EncryptionUtil.decrypt(sessionId);
         String[] sessionSaltArray = sessionSalt.split(SALT_SPLITTER);
@@ -59,5 +60,13 @@ public class SessionManagerService {
             throw new Exception("Session Id expired.");
         }
         return session.getUser();
+    }
+
+    public void deleteSession(String sessionId) {
+        sessionOfUserRepository.deleteBySessionId(sessionId);
+    }
+
+    public void deleteForUser(User userId) {
+        sessionOfUserRepository.deleteForUser(userId);
     }
 }

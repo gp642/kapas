@@ -51,33 +51,6 @@ CREATE TABLE `role`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
-
-DROP TABLE IF EXISTS `permission`;
-CREATE TABLE `permission`
-(
-    `id`                int NOT NULL AUTO_INCREMENT,
-    `permission_name`   varchar(45) NOT NULL,
-    `description`       varchar(150) DEFAULT NULL,
-    `created_by`        int NOT NULL,
-    `modified_by`       int NOT NULL,
-    `creation_time`     datetime DEFAULT CURRENT_TIMESTAMP,
-    `modification_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
-
-
-DROP TABLE IF EXISTS `role_permission`;
-CREATE TABLE `role_permission`
-(
-    `role_id`       int NOT NULL,
-    `permission_id` int NOT NULL,
-    UNIQUE KEY `role_permission_UN` (`role_id`,
-        `permission_id`),
-    KEY             `role_permission_FK` (`permission_id`)
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
-
-
-
 DROP TABLE IF EXISTS `workflow`;
 CREATE TABLE `workflow`
 (
@@ -276,18 +249,6 @@ ALTER TABLE `role`
 
 ALTER TABLE `role`
     ADD CONSTRAINT `role_modification_user_fk` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`);
-
-ALTER TABLE `permission`
-    ADD CONSTRAINT `permission_creation_user_fk` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`);
-
-ALTER TABLE `permission`
-    ADD CONSTRAINT `permission_modification_user_fk` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`);
-
-ALTER TABLE `role_permission`
-    ADD CONSTRAINT `permission_fk` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`);
-
-ALTER TABLE `role_permission`
-    ADD CONSTRAINT `role_fk` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`);
 
 ALTER TABLE `workorder`
     ADD CONSTRAINT `workorder_workflow_fk` FOREIGN KEY (`workflow_id_fk`) REFERENCES `workflow` (`id`);

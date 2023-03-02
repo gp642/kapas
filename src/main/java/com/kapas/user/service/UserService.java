@@ -29,4 +29,12 @@ public class UserService {
             throw new Exception("The password was incorrect.");
         }
     }
+
+    public void deleteSession(String sessionId) {
+        sessionManagerService.deleteSession(sessionId);
+    }
+
+    public void destroyAllUserSessions(User principal) {
+        sessionManagerService.deleteForUser(principal);
+    }
 }

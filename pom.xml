@@ -16,6 +16,10 @@
 	<properties>
 		<java.version>11</java.version>
 		<flyway.version>7.15.0</flyway.version>
+		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+		<org.projectlombok.version>1.18.20</org.projectlombok.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+		<org.hibernate-jpamodelgen.version>5.3.28.Final</org.hibernate-jpamodelgen.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -76,7 +80,22 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.12.0</version>
 		</dependency>
+		<dependency>
+			<groupId>io.hypersistence</groupId>
+			<artifactId>hypersistence-utils-hibernate-55</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${org.hibernate-jpamodelgen.version}</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -141,6 +160,35 @@
 					<url>${jdbc.url}</url>
 					<user>${jdbc.user}</user>
 					<password>${jdbc.password}</password>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${org.projectlombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>${lombok-mapstruct-binding.version}</version>
+						</path>
+						<path>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-jpamodelgen</artifactId>
+							<version>${org.hibernate-jpamodelgen.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 		</plugins>

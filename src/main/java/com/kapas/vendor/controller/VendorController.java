@@ -1,0 +1,60 @@
+package com.kapas.vendor.controller;
+
+import com.kapas.user.annotation.PermissionScopeValidation;
+import com.kapas.user.entity.User;
+import com.kapas.user.model.PermissionEnum;
+import com.kapas.user.model.ScopeEnum;
+import com.kapas.util.Constants;
+import com.kapas.vendor.entity.Vendor_;
+import com.kapas.vendor.model.PaginatedResponse;
+import com.kapas.vendor.model.VendorRequest;
+import com.kapas.vendor.model.VendorResponse;
+import com.kapas.vendor.service.VendorService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/vendor")
+@RequiredArgsConstructor
+public class VendorController {
+
+    private final VendorService vendorService;
+
+    @PostMapping
+    @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.ADD)
+    public ResponseEntity<VendorResponse> createVendor(@Valid @RequestBody VendorRequest vendorRequest, HttpServletRequest request) {
+        User user = (User) request.getAttribute(Constants.PRINCIPAL);
+        VendorResponse vendorResponse = vendorService.createVendor(vendorRequest, user);
+        return new ResponseEntity<>(vendorResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{vendorId}")
+    @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.VIEW)
+    public ResponseEntity<VendorResponse> getVendor(@PathVariable("vendorId") Integer vendorId) throws Exception {
+        VendorResponse vendorResponse = vendorService.getVendor(vendorId);
+        return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.VIEW)
+    public ResponseEntity<PaginatedResponse<VendorResponse>> getAllVendors(
+            @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = Vendor_.ID, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir
+    ) {
+        PaginatedResponse<VendorResponse> vendorResponse = vendorService.getAllVendors(pageNo, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
+    }
+}

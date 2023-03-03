@@ -28,7 +28,8 @@ INSERT INTO `scope`
 VALUES (1, 'TOKEN', 1),
        (2, 'GRADING', 1),
        (3, 'WEIGHING', 1),
-       (4, 'UNLOADING', 1);
+       (4, 'UNLOADING', 1),
+       (5, 'VENDOR', 1);
 
 INSERT INTO permission (name, scope_id)
 select 'ADD', s.id

@@ -2,6 +2,7 @@ package com.kapas.workorder.entity;
 
 
 import com.kapas.user.entity.User;
+import com.kapas.workorder.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,24 +18,6 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "task")
 public class Task {
-
-    private enum Status {
-        NOT_STARTED("NOT STARTED"),
-        IN_PROGRESS("IN PROGRESS"),
-        COMPLETED("COMPLETED"),
-        RE_OPENED("RE OPENED"),
-        CLOSED("CLOSED");
-
-        private String status;
-
-        private String getStatus() {
-            return this.status;
-        }
-
-        private Status(String status) {
-            this.status = status;
-        }
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

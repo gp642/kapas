@@ -46,7 +46,7 @@ public class SessionManagerService {
 
         UserSession userSession = new UserSession(sessionId, currentTime.plusSeconds(EXPIRES_AT_WEBAPP), currentTime);
         Sessions sessionsOfUser = new Sessions(user, userSession);
-        sessionOfUserRepository.save(sessionsOfUser);
+        sessionOfUserRepository.persist(sessionsOfUser);
         return userSession;
     }
 

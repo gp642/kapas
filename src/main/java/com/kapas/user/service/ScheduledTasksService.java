@@ -4,7 +4,6 @@ import com.kapas.user.repository.SessionsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -16,8 +15,7 @@ public class ScheduledTasksService {
     private final SessionsRepository sessionOfUserRepository;
 
 
-    @Scheduled(cron = EVERY_MINUTE, zone = IST_ZONE)
-    @Transactional(rollbackFor = Throwable.class)
+    @Scheduled(cron = EVERY_MIDNIGHT, zone = IST_ZONE)
     public void deleteExpiredUserSessions() {
         sessionOfUserRepository.deleteAllExpiredSessions();
     }

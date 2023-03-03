@@ -23,7 +23,7 @@ public class ApiInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String sessionId = request.getHeader(Constants.SESSION_ID);
         User user = sessionManagerService.validateSession(sessionId);
-        request.setAttribute("principal", user);
+        request.setAttribute(Constants.PRINCIPAL, user);
         return true;
     }
 }

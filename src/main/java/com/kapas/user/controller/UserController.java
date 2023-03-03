@@ -29,7 +29,7 @@ public class UserController {
     @PostMapping(value = "/login")
     public ResponseEntity<LoggedInUser> login(@Valid @RequestBody Login login) throws Exception {
         LoggedInUser loggedInUser = userService.loginWithPassword(login);
-        return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+        return new ResponseEntity<>(loggedInUser, HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/logout")

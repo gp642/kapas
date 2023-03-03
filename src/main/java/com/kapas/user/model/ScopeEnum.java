@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ScopeEnum {
 
-    TOKEN, GRADING, WEIGHING, UNLOADING;
+    VENDOR, TOKEN, GRADING, WEIGHING, UNLOADING;
 }

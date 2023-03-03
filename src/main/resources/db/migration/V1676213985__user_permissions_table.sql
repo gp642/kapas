@@ -275,7 +275,7 @@ ALTER TABLE `task`
     ADD CONSTRAINT `task_modification_user_fk` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`);
 
 ALTER TABLE `vendor`
-    ADD CONSTRAINT `vendor_vendor_type_fk` FOREIGN KEY (`vendor_type_fk`) REFERENCES `vendor` (`id`);
+    ADD CONSTRAINT `vendor_vendor_type_fk` FOREIGN KEY (`vendor_type_fk`) REFERENCES `vendor_type` (`id`);
 
 ALTER TABLE `vendor`
     ADD CONSTRAINT `vendor_id_type_fk` FOREIGN KEY (`id_type_fk`) REFERENCES `id_type` (`id`);

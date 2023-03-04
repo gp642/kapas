@@ -9,8 +9,10 @@ import com.kapas.vendor.model.VendorRequest;
 import com.kapas.vendor.model.VendorResponse;
 import com.kapas.vendor.repository.IdTypeRepository;
 import com.kapas.vendor.repository.VendorTypeRepository;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
@@ -56,4 +58,8 @@ public abstract class VendorMapper {
     }
 
     public abstract PaginatedResponse<VendorResponse> vendorToVendorResponse(Page<Vendor> vendors);
+
+    @InheritConfiguration
+    public abstract void updatedVendorRequestToVendor(VendorRequest vendorRequest, User user, @MappingTarget Vendor vendor);
+
 }

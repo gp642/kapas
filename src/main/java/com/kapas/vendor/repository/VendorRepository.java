@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface VendorRepository extends BaseJpaRepository<Vendor, Integer>, JpaSpecificationExecutor<Vendor> {
     @Query(value = "select v from Vendor v join fetch v.vendorType join fetch v.idType where v.id = :vendorId")
     Optional<Vendor> findByIdAndFetchVendorTypeAndIdType(Integer vendorId);
+
+    @Query(value = "delete from Vendor v where v.id = :vendorId")
+    Optional<Vendor> findByIdAndDelete(Integer vendorId);
 }

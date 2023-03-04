@@ -54,4 +54,21 @@ public class VendorService {
         Page<Vendor> vendors = vendorRepository.findAll(specification, pageable);
         return vendorMapper.vendorToVendorResponse(vendors);
     }
+
+    @Transactional(readOnly = true)
+    public VendorResponse deleteVendor(Integer vendorId) throws Exception {
+        Optional<Vendor> optionalVendor = vendorRepository.findByIdAndDelete(vendorId);
+        Vendor vendor = optionalVendor.orElseThrow(() -> new Exception("Vendor Not Found"));
+        return vendorMapper.vendorToVendorResponse(vendor);
+    }
+
+    @Transactional
+    public VendorResponse updateVendor(VendorRequest vendorRequest, User user, Integer vendorId) throws Exception {
+        Optional<Vendor> optionalVendor = vendorRepository.findByIdAndFetchVendorTypeAndIdType(vendorId);
+        Vendor vendor = optionalVendor.orElseThrow(() -> new Exception("Vendor Not Found"));
+
+        vendorMapper.updatedVendorRequestToVendor(vendorRequest, user, vendor);
+        vendor = vendorRepository.merge(vendor);
+        return vendorMapper.vendorToVendorResponse(vendor);
+    }
 }

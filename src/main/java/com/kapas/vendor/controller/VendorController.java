@@ -54,9 +54,9 @@ public class VendorController {
 
     @DeleteMapping("/{vendorId}")
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.DELETE)
-    public ResponseEntity<VendorResponse> deleteVendor(@PathVariable("vendorId") Integer vendorId) throws Exception {
-        VendorResponse vendorResponse = vendorService.deleteVendor(vendorId);
-        return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
+    public ResponseEntity<String> deleteVendor(@PathVariable("vendorId") Integer vendorId) throws Exception {
+        vendorService.deleteVendor(vendorId);
+        return new ResponseEntity<>("All sessions of this user are deleted", HttpStatus.OK);
     }
 
     @PutMapping("/{vendorId}")
@@ -64,6 +64,6 @@ public class VendorController {
     public ResponseEntity<VendorResponse> updateVendor(@Valid @RequestBody VendorRequest vendorRequest, HttpServletRequest request, @PathVariable("vendorId") Integer vendorId) throws Exception {
         User user = (User) request.getAttribute(Constants.PRINCIPAL);
         VendorResponse vendorResponse = vendorService.updateVendor(vendorRequest, user, vendorId);
-        return new ResponseEntity<>(vendorResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
     }
 }

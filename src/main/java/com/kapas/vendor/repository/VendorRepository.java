@@ -14,5 +14,5 @@ public interface VendorRepository extends BaseJpaRepository<Vendor, Integer>, Jp
     Optional<Vendor> findByIdAndFetchVendorTypeAndIdType(Integer vendorId);
 
     @Query(value = "delete from Vendor v where v.id = :vendorId")
-    Optional<Vendor> findByIdAndDelete(Integer vendorId);
+    void findByIdAndDelete(Integer vendorId);
 }

@@ -107,7 +107,6 @@ public class VendorService {
             vendor.fetch(Vendor_.vendorType, JoinType.INNER);
             vendor.fetch(Vendor_.idType, JoinType.INNER);
             List<Predicate> searchList = new ArrayList<>();
-            searchList.add(cb.conjunction());
 
             if (StringUtils.isNotBlank(vendorSearch.getName())) {
                 searchList.add(cb.like(vendor.get(Vendor_.FIRST_NAME), "%" + vendorSearch.getName() + "%"));
@@ -126,6 +125,9 @@ public class VendorService {
             if(StringUtils.isNotBlank(vendorSearch.getIdNumber()))
                 searchList.add(cb.like(vendor.get(Vendor_.ID_NUMBER),"%"+vendorSearch.getIdNumber()+"%"));
 
+            if(searchList.size() == 0) {
+                searchList.add(cb.conjunction());
+            }
             return cb.or(searchList.toArray(new Predicate[0]));
         };
 

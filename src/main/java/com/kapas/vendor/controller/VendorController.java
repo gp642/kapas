@@ -13,13 +13,7 @@ import com.kapas.vendor.service.VendorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -55,6 +49,21 @@ public class VendorController {
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir
     ) {
         PaginatedResponse<VendorResponse> vendorResponse = vendorService.getAllVendors(pageNo, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{vendorId}")
+    @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.DELETE)
+    public ResponseEntity<String> deleteVendor(@PathVariable("vendorId") Integer vendorId) throws Exception {
+        vendorService.deleteVendor(vendorId);
+        return new ResponseEntity<>("Vendor Deleted Successfully", HttpStatus.OK);
+    }
+
+    @PutMapping("/{vendorId}")
+    @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.UPDATE)
+    public ResponseEntity<VendorResponse> updateVendor(@Valid @RequestBody VendorRequest vendorRequest, HttpServletRequest request, @PathVariable("vendorId") Integer vendorId) throws Exception {
+        User user = (User) request.getAttribute(Constants.PRINCIPAL);
+        VendorResponse vendorResponse = vendorService.updateVendor(vendorRequest, user, vendorId);
         return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
     }
 }

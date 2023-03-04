@@ -27,6 +27,12 @@ public class VendorService {
     private final VendorRepository vendorRepository;
     private final VendorMapper vendorMapper;
 
+    private Vendor checkVendor(Integer vendorId) throws Exception {
+        Optional<Vendor> optionalVendor = vendorRepository.findByIdAndFetchVendorTypeAndIdType(vendorId);
+        Vendor vendor = optionalVendor.orElseThrow(() -> new Exception("Vendor Not Found"));
+        return vendor
+    }
+
     @Transactional
     public VendorResponse createVendor(VendorRequest vendorRequest, User user) {
         Vendor vendor = vendorMapper.vendorRequestToVendor(vendorRequest, user);
@@ -53,5 +59,19 @@ public class VendorService {
         };
         Page<Vendor> vendors = vendorRepository.findAll(specification, pageable);
         return vendorMapper.vendorToVendorResponse(vendors);
+    }
+
+    @Transactional
+    public void deleteVendor(Integer vendorId) throws Exception {
+        Vendor vendor = checkVendor(vendorId);
+        vendorRepository.delete(vendor);
+    }
+
+    @Transactional
+    public VendorResponse updateVendor(VendorRequest vendorRequest, User user, Integer vendorId) throws Exception {
+        Vendor vendor = checkVendor(vendorId);
+        vendorMapper.updatedVendorRequestToVendor(vendorRequest, user, vendor);
+        vendor = vendorRepository.merge(vendor);
+        return vendorMapper.vendorToVendorResponse(vendor);
     }
 }

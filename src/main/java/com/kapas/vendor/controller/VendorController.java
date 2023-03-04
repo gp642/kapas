@@ -9,6 +9,7 @@ import com.kapas.vendor.entity.Vendor_;
 import com.kapas.vendor.model.PaginatedResponse;
 import com.kapas.vendor.model.VendorRequest;
 import com.kapas.vendor.model.VendorResponse;
+import com.kapas.vendor.model.VendorSearch;
 import com.kapas.vendor.service.VendorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class VendorController {
     @PostMapping
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.ADD)
     public ResponseEntity<VendorResponse> createVendor(@Valid @RequestBody VendorRequest vendorRequest,
-                                                       HttpServletRequest request) {
+                                                       HttpServletRequest request) throws Exception {
         User user = (User) request.getAttribute(Constants.PRINCIPAL);
         VendorResponse vendorResponse = vendorService.createVendor(vendorRequest, user);
         return new ResponseEntity<>(vendorResponse, HttpStatus.CREATED);
@@ -41,15 +42,16 @@ public class VendorController {
         return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
     }
 
-    @GetMapping
+    @PostMapping("/search")
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.VIEW)
     public ResponseEntity<PaginatedResponse<VendorResponse>> getAllVendors(
             @RequestParam(value = "pageNo", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = Vendor_.ID, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir
-    ) {
-        PaginatedResponse<VendorResponse> vendorResponse = vendorService.getAllVendors(pageNo, pageSize, sortBy, sortDir);
+            @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir,
+            @RequestBody VendorSearch vendorSearch
+            ) {
+        PaginatedResponse<VendorResponse> vendorResponse = vendorService.getAllVendors(pageNo, pageSize, sortBy, sortDir, vendorSearch);
         return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
     }
 

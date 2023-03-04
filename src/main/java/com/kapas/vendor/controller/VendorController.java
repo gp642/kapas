@@ -56,7 +56,7 @@ public class VendorController {
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.DELETE)
     public ResponseEntity<String> deleteVendor(@PathVariable("vendorId") Integer vendorId) throws Exception {
         vendorService.deleteVendor(vendorId);
-        return new ResponseEntity<>("All sessions of this user are deleted", HttpStatus.OK);
+        return new ResponseEntity<>("Vendor Deleted Successfully", HttpStatus.OK);
     }
 
     @PutMapping("/{vendorId}")

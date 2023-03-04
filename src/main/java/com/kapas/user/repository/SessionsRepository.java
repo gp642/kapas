@@ -16,6 +16,7 @@ public interface SessionsRepository extends BaseJpaRepository<Sessions, Integer>
 
     @Query("delete from Sessions s where s.expiresAt <= now()")
     @Modifying
+    @Transactional
     void deleteAllExpiredSessions();
 
     @Query(value = "select s from Sessions s join fetch s.user where s.sessionId = :sessionId")

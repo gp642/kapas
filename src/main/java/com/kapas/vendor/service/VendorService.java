@@ -3,6 +3,9 @@ package com.kapas.vendor.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kapas.user.entity.User;
+import com.kapas.util.AppUtils;
+import com.kapas.util.SearchOperation;
+import com.kapas.util.SearchOperationEnum;
 import com.kapas.vendor.entity.IdType_;
 import com.kapas.vendor.entity.Vendor;
 import com.kapas.vendor.entity.VendorType_;
@@ -14,7 +17,6 @@ import com.kapas.vendor.model.VendorResponse;
 import com.kapas.vendor.model.VendorSearch;
 import com.kapas.vendor.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +34,11 @@ import javax.persistence.criteria.Predicate;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,17 +58,17 @@ public class VendorService {
 
     private void getVendorByNameAndMobile(String firstName, String lastName, String mobile) throws Exception {
         Optional<Vendor> optionalVendor = vendorRepository.findByNameAndMobile(firstName, lastName, mobile);
-        if(optionalVendor.isPresent())
-            throw new Exception("Vendor with similar details already exists");
+        if (optionalVendor.isPresent())
+            throw new Exception("Vendor with first name, last name and mobile already exists");
     }
 
     private void validateVendorStateCity(String state, String city) throws Exception {
         Map<String, List<String>> stateCityMap = getStateAndCity();
-        if(!stateCityMap.containsKey(state))
+        if (!stateCityMap.containsKey(state))
             throw new Exception("State not found");
         else {
             List<String> cityList = stateCityMap.get(state);
-            if(!cityList.contains(city))
+            if (!cityList.contains(city))
                 throw new Exception("State-City combination not found");
         }
     }
@@ -70,13 +76,13 @@ public class VendorService {
     private Map<String, List<String>> getStateAndCity() {
         Map<String, List<String>> stateCityMap = new HashMap<>();
         try {
-           File file = stateCityResource.getFile();
-           String content = new String(Files.readAllBytes(file.toPath()));
-           Gson gson = new Gson();
-           Type stateCityMapType = new TypeToken<Map<String, List<String>>>() {}.getType();
-           stateCityMap = gson.fromJson(content, stateCityMapType);
-        }
-        catch (Exception e) {
+            File file = stateCityResource.getFile();
+            String content = new String(Files.readAllBytes(file.toPath()));
+            Gson gson = new Gson();
+            Type stateCityMapType = new TypeToken<Map<String, List<String>>>() {
+            }.getType();
+            stateCityMap = gson.fromJson(content, stateCityMapType);
+        } catch (Exception e) {
             LOGGER.error("Error in Parsing state-city.json");
         }
 
@@ -106,26 +112,24 @@ public class VendorService {
         Specification<Vendor> specification = (vendor, query, cb) -> {
             vendor.fetch(Vendor_.vendorType, JoinType.INNER);
             vendor.fetch(Vendor_.idType, JoinType.INNER);
-            List<Predicate> searchList = new ArrayList<>();
 
-            if (StringUtils.isNotBlank(vendorSearch.getName())) {
-                searchList.add(cb.like(vendor.get(Vendor_.FIRST_NAME), "%" + vendorSearch.getName() + "%"));
-                searchList.add(cb.like(vendor.get(Vendor_.LAST_NAME), "%" + vendorSearch.getName() + "%"));
-            }
+            List<SearchOperation<String>> searchOperationList = new ArrayList<>();
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS, vendor.get(Vendor_.FIRST_NAME),
+                    vendorSearch.getName()));
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS, vendor.get(Vendor_.LAST_NAME),
+                    vendorSearch.getName()));
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS, vendor.get(Vendor_.MOBILE),
+                    vendorSearch.getMobile()));
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS,
+                    vendor.get(Vendor_.VENDOR_TYPE).get(VendorType_.TYPE), vendorSearch.getVendorType()));
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS,
+                    vendor.get(Vendor_.ID_TYPE).get(IdType_.TYPE), vendorSearch.getIdType()));
+            searchOperationList.add(new SearchOperation<>(SearchOperationEnum.CONTAINS,
+                    vendor.get(Vendor_.ID_NUMBER), vendorSearch.getIdNumber()));
 
-            if(StringUtils.isNotBlank(vendorSearch.getMobile()))
-                searchList.add(cb.like(vendor.get(Vendor_.MOBILE),"%"+vendorSearch.getMobile()+"%"));
+            List<Predicate> searchList = AppUtils.getPredicateList(searchOperationList, cb);
 
-            if(StringUtils.isNotBlank(vendorSearch.getVendorType()))
-                searchList.add(cb.like(vendor.get(Vendor_.VENDOR_TYPE).get(VendorType_.TYPE),"%"+vendorSearch.getVendorType()+"%"));
-
-            if(StringUtils.isNotBlank(vendorSearch.getIdType()))
-                searchList.add(cb.like(vendor.get(Vendor_.ID_TYPE).get(IdType_.TYPE),"%"+vendorSearch.getIdType()+"%"));
-
-            if(StringUtils.isNotBlank(vendorSearch.getIdNumber()))
-                searchList.add(cb.like(vendor.get(Vendor_.ID_NUMBER),"%"+vendorSearch.getIdNumber()+"%"));
-
-            if(searchList.size() == 0) {
+            if (searchList.isEmpty()) {
                 searchList.add(cb.conjunction());
             }
             return cb.or(searchList.toArray(new Predicate[0]));

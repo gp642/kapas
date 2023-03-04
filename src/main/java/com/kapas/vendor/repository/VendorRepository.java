@@ -14,6 +14,6 @@ public interface VendorRepository extends BaseJpaRepository<Vendor, Integer>, Jp
     @Query(value = "select v from Vendor v join fetch v.vendorType join fetch v.idType where v.id = :vendorId")
     Optional<Vendor> findByIdAndFetchVendorTypeAndIdType(@Param("vendorId") Integer vendorId);
 
-    @Query(value = "select v from Vendor v join fetch v.vendorType join fetch v.idType where v.firstName = :firstName and v.lastName = :lastName and v.mobile = :mobile")
-    Optional<Vendor> findByNameAndMobile(String firstName, String lastName, String mobile);
+    @Query(value = "select v from Vendor v where v.firstName = :firstName and v.lastName = :lastName and v.mobile = :mobile")
+    Optional<Vendor> findByNameAndMobile(@Param("firstName") String firstName, @Param("lastName") String lastName, @Param("mobile") String mobile);
 }

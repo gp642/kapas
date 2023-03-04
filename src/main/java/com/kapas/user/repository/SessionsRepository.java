@@ -18,8 +18,8 @@ public interface SessionsRepository extends BaseJpaRepository<Sessions, Integer>
     @Modifying
     void deleteAllExpiredSessions();
 
-    @Query("select s from Sessions s join fetch s.user u where u.id = :userId and s.sessionId = :sessionId")
-    Optional<Sessions> findByUserIdAndSessionId(@Param("userId") Integer userId,@Param("sessionId") String sessionId);
+    @Query(value = "select s from Sessions s join fetch s.user where s.sessionId = :sessionId")
+    Optional<Sessions> findBySessionId(@Param("sessionId") String sessionId);
 
     @Transactional
     @Modifying

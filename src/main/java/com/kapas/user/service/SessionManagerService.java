@@ -52,9 +52,7 @@ public class SessionManagerService {
 
     @Transactional(readOnly = true)
     public User validateSession(@NotBlank(message = "Missing Session-Id header in request.") String sessionId) throws Exception {
-        String sessionSalt = EncryptionUtil.decrypt(sessionId);
-        String[] sessionSaltArray = sessionSalt.split(SALT_SPLITTER);
-        Optional<Sessions> sessions = sessionOfUserRepository.findByUserIdAndSessionId(Integer.valueOf(sessionSaltArray[0]), sessionId);
+        Optional<Sessions> sessions = sessionOfUserRepository.findBySessionId(sessionId);
         Sessions session = sessions.orElseThrow(()-> new Exception("Provided Session Id is not valid"));
         if(session.getExpiresAt().compareTo(LocalDateTime.now()) <= 0 ) {
             throw new Exception("Session Id expired.");

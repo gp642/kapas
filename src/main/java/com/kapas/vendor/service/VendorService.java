@@ -117,10 +117,10 @@ public class VendorService {
                 searchList.add(cb.like(vendor.get(Vendor_.MOBILE),"%"+vendorSearch.getMobile()+"%"));
 
             if(StringUtils.isNotBlank(vendorSearch.getVendorType()))
-                searchList.add(cb.like(vendor.get(VendorType_.TYPE),"%"+vendorSearch.getVendorType()+"%"));
+                searchList.add(cb.like(vendor.get(Vendor_.VENDOR_TYPE).get(VendorType_.TYPE),"%"+vendorSearch.getVendorType()+"%"));
 
             if(StringUtils.isNotBlank(vendorSearch.getIdType()))
-                searchList.add(cb.like(vendor.get(IdType_.TYPE),"%"+vendorSearch.getIdType()+"%"));
+                searchList.add(cb.like(vendor.get(Vendor_.ID_TYPE).get(IdType_.TYPE),"%"+vendorSearch.getIdType()+"%"));
 
             if(StringUtils.isNotBlank(vendorSearch.getIdNumber()))
                 searchList.add(cb.like(vendor.get(Vendor_.ID_NUMBER),"%"+vendorSearch.getIdNumber()+"%"));

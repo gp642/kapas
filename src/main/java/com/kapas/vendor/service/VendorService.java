@@ -29,8 +29,7 @@ public class VendorService {
 
     private Vendor checkVendor(Integer vendorId) throws Exception {
         Optional<Vendor> optionalVendor = vendorRepository.findByIdAndFetchVendorTypeAndIdType(vendorId);
-        Vendor vendor = optionalVendor.orElseThrow(() -> new Exception("Vendor Not Found"));
-        return vendor
+        return optionalVendor.orElseThrow(() -> new Exception("Vendor Not Found"));
     }
 
     @Transactional

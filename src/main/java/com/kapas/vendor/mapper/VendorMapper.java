@@ -60,6 +60,7 @@ public abstract class VendorMapper {
     public abstract PaginatedResponse<VendorResponse> vendorToVendorResponse(Page<Vendor> vendors);
 
     @InheritConfiguration
+    @Mapping(target = "createdBy", ignore = true)
     public abstract void updatedVendorRequestToVendor(VendorRequest vendorRequest, User user, @MappingTarget Vendor vendor);
 
 }

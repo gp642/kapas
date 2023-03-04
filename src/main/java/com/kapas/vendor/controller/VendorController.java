@@ -27,7 +27,8 @@ public class VendorController {
 
     @PostMapping
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.ADD)
-    public ResponseEntity<VendorResponse> createVendor(@Valid @RequestBody VendorRequest vendorRequest, HttpServletRequest request) {
+    public ResponseEntity<VendorResponse> createVendor(@Valid @RequestBody VendorRequest vendorRequest,
+                                                       HttpServletRequest request) {
         User user = (User) request.getAttribute(Constants.PRINCIPAL);
         VendorResponse vendorResponse = vendorService.createVendor(vendorRequest, user);
         return new ResponseEntity<>(vendorResponse, HttpStatus.CREATED);
@@ -61,7 +62,9 @@ public class VendorController {
 
     @PutMapping("/{vendorId}")
     @PermissionScopeValidation(scope = ScopeEnum.VENDOR, permission = PermissionEnum.UPDATE)
-    public ResponseEntity<VendorResponse> updateVendor(@Valid @RequestBody VendorRequest vendorRequest, HttpServletRequest request, @PathVariable("vendorId") Integer vendorId) throws Exception {
+    public ResponseEntity<VendorResponse> updateVendor(@Valid @RequestBody VendorRequest vendorRequest,
+                                                       HttpServletRequest request,
+                                                       @PathVariable("vendorId") Integer vendorId) throws Exception {
         User user = (User) request.getAttribute(Constants.PRINCIPAL);
         VendorResponse vendorResponse = vendorService.updateVendor(vendorRequest, user, vendorId);
         return new ResponseEntity<>(vendorResponse, HttpStatus.OK);
